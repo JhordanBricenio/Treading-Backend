@@ -1,12 +1,15 @@
 package com.codej.service.impl;
 
 import com.codej.config.JwtProvider;
+import com.codej.domain.VerificationType;
 import com.codej.exception.UserException;
+import com.codej.model.TwoFactorAuth;
 import com.codej.model.UserEntity;
 import com.codej.repository.IUserRepository;
 import com.codej.response.AuthResponse;
 import com.codej.service.IUserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,29 +52,41 @@ public class UserServiceImpl  implements IUserService {
 
     @Override
     public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        UserEntity user=userRepository.findByEmail(email);
+        if(user==null){
+            throw  new UserException("User not found");
+        }
+        return user;
     }
 
     @Override
     public UserEntity findUserProfileByJwt(String jwt) {
         String email = jwtProvider.getEmailFromToken(jwt);
-        UserEntity user = userRepository.findByEmail(email);
+        UserEntity user=userRepository.findByEmail(email);
+        if(user==null){
+            throw  new UserException("User not found");
+        }
         return user;
     }
 
     @Override
-    public UserEntity getUser(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserEntity finUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
     }
 
     @Override
-    public List<UserEntity> getUsers() {
-        return List.of();
+    public UserEntity enableTwoFactorAuthentication(VerificationType verificationType, String sendTo,UserEntity user) {
+        TwoFactorAuth twoFactorAuth= new TwoFactorAuth();
+        twoFactorAuth.setEnabled(true);
+        twoFactorAuth.setSetSendTo(verificationType);
+        user.setTwoFactorAuth(twoFactorAuth);
+        return userRepository.save(user);
     }
 
     @Override
-    public UserEntity findUserByJwt(String jwt) {
-        return null;
+    public UserEntity updatePassword(UserEntity user, String newPassword) {
+        user.setPassword(newPassword);
+        return userRepository.save(user);
     }
 
     @Override

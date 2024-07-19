@@ -11,6 +11,6 @@ public class AuthResponse{
         String jwt;
         boolean status;
         String message;
-        Boolean     isTwoFactorAuthEnabled;
+        boolean     isTwoFactorAuthEnabled;
         String session;
 }

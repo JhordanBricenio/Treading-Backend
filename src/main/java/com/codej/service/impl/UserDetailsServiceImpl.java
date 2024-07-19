@@ -63,10 +63,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         String accessToken = jwtUtils.generateToken(authentication);
         UserEntity user = userRepository.findByEmail(username);
+
         if(user.getTwoFactorAuth().isEnabled()){
             AuthResponse res = new AuthResponse();
             res.setMessage("Two factor authentication is enabled");
-            res.setIsTwoFactorAuthEnabled(true);
+            res.setTwoFactorAuthEnabled(true);
             String otp= OtpUtils.generateOtp();
             TwoFactorOTP oldTwoFactorOtp= twoFactorOtpService.findByUser(user.getId());
             if(oldTwoFactorOtp!=null){
@@ -98,7 +99,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
-    public ResponseEntity<AuthResponse> verifySigninOtp(@PathVariable String otp, @RequestParam String id)
+    public ResponseEntity<AuthResponse> verifySigninOtp(String otp, String id)
             throws  Exception{
 
         TwoFactorOTP twoFactorOTP = twoFactorOtpService.findById(id);
@@ -107,7 +108,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     "User loged succesfully", true, "Active");
             return new ResponseEntity<>(authResponse, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new  AuthResponse("Invalid OTP", false, "Invalid OTP", false, "Inactive"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<AuthResponse>(new  AuthResponse("Invalid OTP", false, "Invalid OTP", false, "Inactive"), HttpStatus.BAD_REQUEST);
 
     }
 
