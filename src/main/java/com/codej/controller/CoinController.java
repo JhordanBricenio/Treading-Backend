@@ -32,21 +32,21 @@ public class CoinController {
         return new ResponseEntity<>(jsonNode, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("search")
+    @GetMapping("/search")
     ResponseEntity<JsonNode> searchCoin(@RequestParam("q")String keyword) throws Exception {
          String coin= coinService.searchCoin(keyword);
         JsonNode jsonNode= objectMapper.readTree(coin);
          return  ResponseEntity.ok(jsonNode);
     }
 
-    @GetMapping("search")
+    @GetMapping("/top50")
     ResponseEntity<JsonNode> getTop50CoinByMarketCapRank() throws Exception {
         String coin= coinService.getTop50CoinsByMarketsCapRank();
         JsonNode jsonNode= objectMapper.readTree(coin);
         return  ResponseEntity.ok(jsonNode);
     }
 
-    @GetMapping("search")
+    @GetMapping("/treading")
     ResponseEntity<JsonNode> getTreadingCoin() throws Exception {
         String coin= coinService.getTreadingCoins();
         JsonNode jsonNode= objectMapper.readTree(coin);
