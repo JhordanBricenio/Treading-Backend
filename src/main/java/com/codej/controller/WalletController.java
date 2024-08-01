@@ -4,6 +4,7 @@ import com.codej.model.Order;
 import com.codej.model.UserEntity;
 import com.codej.model.Wallet;
 import com.codej.model.WalletTransaction;
+import com.codej.service.IOrderService;
 import com.codej.service.IUserService;
 import com.codej.service.IWalletService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ public class WalletController {
     private IWalletService walletService;
 
     private IUserService userService;
+
+    private IOrderService orderService;
 
     @GetMapping
     public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorization") String jwt){
