@@ -78,4 +78,5 @@ public class WalletServiceImpl implements IWalletService {
         walletRepository.save(wallet);
         return wallet;
     }
+
 }
