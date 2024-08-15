@@ -1,5 +1,6 @@
 package com.codej.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -83,7 +84,7 @@ public class Coin {
     @JsonProperty("atl_date")
     private Date atlDate;
 
-    @JsonProperty("roi")
+    @JsonIgnore
     private String roi;
 
     @JsonProperty("last_updated")

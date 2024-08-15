@@ -1,10 +1,8 @@
 package com.codej.controller;
 
-import com.codej.model.Order;
-import com.codej.model.UserEntity;
-import com.codej.model.Wallet;
-import com.codej.model.WalletTransaction;
+import com.codej.model.*;
 import com.codej.service.IOrderService;
+import com.codej.service.IPaymentService;
 import com.codej.service.IUserService;
 import com.codej.service.IWalletService;
 import lombok.AllArgsConstructor;
@@ -17,11 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/wallet")
 public class WalletController {
 
-    private IWalletService walletService;
+    private final IWalletService walletService;
 
-    private IUserService userService;
+    private final IUserService userService;
 
-    private IOrderService orderService;
+    private final IOrderService orderService;
+
+    private final IPaymentService paymentService;
 
     @GetMapping
     public ResponseEntity<Wallet> getUserWallet(@RequestHeader("Authorization") String jwt){
@@ -50,6 +50,25 @@ public class WalletController {
 
         return  new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
     }
+
+    @PutMapping("/deposit")
+    public ResponseEntity<Wallet> addBalanceToWallet(@RequestHeader("Authorization") String jwt,
+                                                  @RequestParam(name = "order_id") Long orderId,
+                                                     @RequestParam(name = "payment_id")String paymentId)
+            throws Exception {
+
+        UserEntity user= userService.findUserProfileByJwt(jwt);
+        Wallet wallet= walletService.getUserWallet(user);
+        PaymentOrder order= paymentService.getPaymentOrderById(orderId);
+        Boolean status= paymentService.procedPaymentOrder(order, paymentId);
+
+        if (status){
+            wallet= walletService.addBalance(wallet, order.getAmount());
+        }
+
+        return  new ResponseEntity<>(wallet, HttpStatus.ACCEPTED);
+    }
+
 
 
 
